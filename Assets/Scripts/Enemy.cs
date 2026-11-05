@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -16,6 +17,8 @@ public class Enemy : MonoBehaviour
     //ダメージ中のコルーチンを参照する変数
     private Coroutine damageStart;
 
+    public GameObject effectObject;
+
     //// Start is called once before the first execution of Update after the MonoBehaviour is created
     //void Start()
     //{
@@ -24,7 +27,7 @@ public class Enemy : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {            
+    {
         //もしもダメージコルーチンがnullでなければ（ダメージ中）
         if (damageStart != null)
         {
@@ -67,6 +70,12 @@ public class Enemy : MonoBehaviour
                     damageStart = StartCoroutine(DamageStart()); //コルーチンの発動
                 }
             }
+            //ぶつかった時
+            else if (other.gameObject.tag == "Slash")
+            {
+                Destroy(gameObject);
+
+            }
 
         }
     }
@@ -81,4 +90,13 @@ public class Enemy : MonoBehaviour
 
 
     }
+    void CreateEffect()
+    {
+        Instantiate(
+            effectObject,
+            transform.position,
+            Quaternion.identity);
+
+    }
 }
+

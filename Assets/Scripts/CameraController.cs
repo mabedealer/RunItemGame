@@ -8,9 +8,14 @@ public class CameraController : MonoBehaviour
     GameObject player;
 
     public float followSpeed = 5.0f; //追従スピード
+    [Header("カメラ初期位置")]
+    public Vector3 startPos = new Vector3(0, 4.5f, -7.5f);
+    public Quaternion startRot =Quaternion.Euler(15.5f, 0, 0);
 
     void Start()
     {
+        transform.position = startPos;
+        transform.rotation = startRot;
         //playerタグがついているオブジェクトを探す
         player = GameObject.FindGameObjectWithTag("Player");
 

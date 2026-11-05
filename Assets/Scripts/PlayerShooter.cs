@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerShoot : MonoBehaviour
+public class PlayerShooter : MonoBehaviour
 {
     [Header("生成される弾")]
     public GameObject bullet;

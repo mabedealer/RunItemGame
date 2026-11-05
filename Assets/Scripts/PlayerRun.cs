@@ -39,6 +39,9 @@ public class PlayerRun : MonoBehaviour
     private InputAction moveAction; //"Move"アクションを参照するための変数
     private InputAction jumpAction; //"Jump"アクションを参照するための変数
 
+    [Header("プレイヤーの見た目オブジェクト")]
+    public GameObject playerBody;
+
     //体力の残を参照できるメソッド
     public int Life()
     {
@@ -65,6 +68,28 @@ public class PlayerRun : MonoBehaviour
 
     void Update()
     {
+        //点滅処理
+        if (IsStun())
+        {
+            float val = Mathf.Sin(Time.time * 50);
+            if(val >0)
+            {
+                //animatorBody.GetComponent<MeshRenderer>().enabled = true; これだとボディだけ点滅するのでダメ
+                animatorBody.SetActive(true);
+            }
+            else
+            {
+                //animatorBody.GetComponent<MeshRenderer>().enabled = false;
+                animatorBody.SetActive(false);
+
+
+            }
+        }
+        else //ダメージ中じゃない時
+        {
+            animatorBody.GetComponent<MeshRenderer>().enabled = true;
+
+        }
         //CharacterControllerコンポーネントが接地判断をもっている
         //入力検知は地面にいる時
         if (controller.isGrounded)
@@ -185,4 +210,11 @@ public class PlayerRun : MonoBehaviour
     {
         life--;
     }
+    UIController controller = GameObjetByType<UIController>();
+    ControllerColliderHit.UpdateLife();
+        
+    if(DefaultLife<=0)
+        {
+        GameManager
+        }
 }
