@@ -72,7 +72,7 @@ public class PlayerRun : MonoBehaviour
         if (IsStun())
         {
             float val = Mathf.Sin(Time.time * 50);
-            if(val >0)
+            if (val > 0)
             {
                 //animatorBody.GetComponent<MeshRenderer>().enabled = true; これだとボディだけ点滅するのでダメ
                 animatorBody.SetActive(true);
@@ -136,31 +136,31 @@ public class PlayerRun : MonoBehaviour
                 moveDirection.z = Mathf.Clamp(acceleratedZ, 0, speedZ);
             }
 
-                //ジャンプボタン押されている間
-                //if (Input.GetButton("Jump"))
-                if (jumpAction.IsPressed())
-                {
+            //ジャンプボタン押されている間
+            //if (Input.GetButton("Jump"))
+            if (jumpAction.IsPressed())
+            {
                 if (IsStun()) return; //スタン中は何も起こさない
                 moveDirection.y = speedJump; //y方向をセッティング
-                //animator.SetTrigger("jump"); //ジャンプアニメへの切替
-                }
+                                             //animator.SetTrigger("jump"); //ジャンプアニメへの切替
             }
-
-            //常に重力はかかっている
-            moveDirection.y -= gravity;
-
-            //セッティングしたmoveDirectionの値を使ってMoveメソッドの発動
-            //※実際にPlayerが動く Time.deltaTimeでPC性能差によらないように動作安定
-            //回転を含む前進だと、グローバルな座標指定からズレるので、グローバルな座標になるように変換してからMoveに与える
-            Vector3 globalDirection = transform.TransformDirection(moveDirection);
-            controller.Move(globalDirection * Time.deltaTime);
-
-            //地面にいるのであればY成分の力を毎回0にリセット
-            if (controller.isGrounded) moveDirection.y = 0;
-
-            //アニメの制御
-            //animator.SetBool("run", moveDirection.z != 0.0f);
         }
+
+        //常に重力はかかっている
+        moveDirection.y -= gravity;
+
+        //セッティングしたmoveDirectionの値を使ってMoveメソッドの発動
+        //※実際にPlayerが動く Time.deltaTimeでPC性能差によらないように動作安定
+        //回転を含む前進だと、グローバルな座標指定からズレるので、グローバルな座標になるように変換してからMoveに与える
+        Vector3 globalDirection = transform.TransformDirection(moveDirection);
+        controller.Move(globalDirection * Time.deltaTime);
+
+        //地面にいるのであればY成分の力を毎回0にリセット
+        if (controller.isGrounded) moveDirection.y = 0;
+
+        //アニメの制御
+        //animator.SetBool("run", moveDirection.z != 0.0f);
+    }
 
     public void MoveToLeft()
     {
@@ -209,12 +209,16 @@ public class PlayerRun : MonoBehaviour
     public void LifeDown()
     {
         life--;
-    }
-    UIController controller = GameObjetByType<UIController>();
-    ControllerColliderHit.UpdateLife();
-        
-    if(DefaultLife<=0)
+
+    //UIControllerを探して、ライフ更新メソッド
+    UIController controller = GameObject.FindAnyObjectByType<UIController>();
+    controller.UpdateLife();
+
+    //ライフが0以下になったら
+    if(life<=0)
         {
-        GameManager
+        //ステータス変更
+        GameManager.gameState = GameState.GameOver;
         }
+    }
 }
