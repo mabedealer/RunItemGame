@@ -66,9 +66,24 @@ public class UIController : MonoBehaviour
         bulletText.text = player.GetRemaining().ToString();
     }
 
+    //リトライボタン
     public void Retry()
     {
+        //現シーンの情報を取得
         string currentScene = SceneManager.GetActiveScene().name;
+        //取得した現シーンを読み直す
         SceneManager.LoadScene(currentScene);
+    }
+
+    //ゲームオーバー時、GameManagerから呼び出されるメソッド
+    public void GameOverDisplay()
+    {
+        buttonPanel.SetActive(true); //ボタンの表示
+        //ステータス「GAME OVER」の表示
+        statusText.SetActive(true);
+        statusText.GetComponent<TextMeshProUGUI>().text = "GAME OVER";
+
+        sliderPanel.SetActive(false); //スライダーパネルの非表示
+        bulletPanel.SetActive(false); //Bulletパネルの非表示
     }
 }

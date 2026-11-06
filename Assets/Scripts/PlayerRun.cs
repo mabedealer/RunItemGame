@@ -10,7 +10,6 @@ public class PlayerRun : MonoBehaviour
     const int DefaultLife = 3; //最大体力
     const float StunDuration = 0.5f; //硬直時間
 
-
     CharacterController controller; //CharacterControllerを参照できる変数
     [SerializeField] private GameObject animatorBody; //Animatorコンポーネントをもっているオブジェクトの取得
     Animator animator; //Animatorを参照できる変数
@@ -39,13 +38,23 @@ public class PlayerRun : MonoBehaviour
     private InputAction moveAction; //"Move"アクションを参照するための変数
     private InputAction jumpAction; //"Jump"アクションを参照するための変数
 
-    [Header("プレイヤーの見た目オブジェクト")]
-    public GameObject playerBody;
+    //[Header("プレイヤーの見た目オブジェクト")]
+    //public GameObject playerBody;
 
     //体力の残を参照できるメソッド
     public int Life()
     {
         return life;
+    }
+
+    //Lifeを回復させるメソッド
+    public void RecoverLife(int val)
+    {
+        life += val;
+        if (life > DefaultLife)
+        {
+            life = DefaultLife;
+        }
     }
 
     //硬直カウントダウン中か体力0なら止まる
@@ -68,28 +77,29 @@ public class PlayerRun : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.gameState == GameState.GameEnd) return;
+
         //点滅処理
         if (IsStun())
         {
             float val = Mathf.Sin(Time.time * 50);
+
             if (val > 0)
             {
-                //animatorBody.GetComponent<MeshRenderer>().enabled = true; これだとボディだけ点滅するのでダメ
                 animatorBody.SetActive(true);
             }
             else
             {
-                //animatorBody.GetComponent<MeshRenderer>().enabled = false;
                 animatorBody.SetActive(false);
-
-
             }
         }
         else //ダメージ中じゃない時
         {
-            animatorBody.GetComponent<MeshRenderer>().enabled = true;
-
+            //姿を表す
+            animatorBody.SetActive(true);
         }
+
+
         //CharacterControllerコンポーネントが接地判断をもっている
         //入力検知は地面にいる時
         if (controller.isGrounded)
@@ -134,15 +144,17 @@ public class PlayerRun : MonoBehaviour
                 //自動前進するためのmoveDirectionのZ(前進加速)を決める
                 float acceleratedZ = moveDirection.z + (accelerationZ * Time.deltaTime);
                 moveDirection.z = Mathf.Clamp(acceleratedZ, 0, speedZ);
+
             }
 
-            //ジャンプボタン押されている間
+            //ジャンプボタン　押されている間
             //if (Input.GetButton("Jump"))
             if (jumpAction.IsPressed())
             {
                 if (IsStun()) return; //スタン中は何も起こさない
+
                 moveDirection.y = speedJump; //y方向をセッティング
-                                             //animator.SetTrigger("jump"); //ジャンプアニメへの切替
+                //animator.SetTrigger("jump"); //ジャンプアニメへの切替
             }
         }
 
@@ -178,6 +190,7 @@ public class PlayerRun : MonoBehaviour
     public void MoveToRight()
     {
         if (IsStun()) return; //スタン中は何も起こさない
+
         //現レーンがまだ最大でなければ
         if (targetLane < MaxLane)
         {
@@ -191,6 +204,7 @@ public class PlayerRun : MonoBehaviour
         yield return new WaitForSeconds(0.1f); //0.1秒待ってから
         resetIntervalCol = null; //コルーチン発動中である証明だった変数を解放
     }
+
     //Playerの接触判定
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
@@ -210,15 +224,15 @@ public class PlayerRun : MonoBehaviour
     {
         life--;
 
-    //UIControllerを探して、ライフ更新メソッド
-    UIController controller = GameObject.FindAnyObjectByType<UIController>();
-    controller.UpdateLife();
+        //UIControllerを探して、ライフ更新メソッド
+        UIController controller = GameObject.FindAnyObjectByType<UIController>();
+        controller.UpdateLife();
 
-    //ライフが0以下になったら
-    if(life<=0)
+        //ライフが0以下になったら
+        if (life <= 0)
         {
-        //ステータス変更
-        GameManager.gameState = GameState.GameOver;
+            //ステータス変更
+            GameManager.gameState = GameState.GameOver;
         }
     }
 }

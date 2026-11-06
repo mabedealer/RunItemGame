@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Enemy
   - Bullet
+  - MixingCamera
+  - Item
   layers:
   - Default
   - TransparentFX
